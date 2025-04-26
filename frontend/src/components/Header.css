@@ -1,0 +1,17 @@
+.navbar-brand img {
+  max-height: 50px;
+  width: auto;
+  object-fit: contain;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.navbar-brand span {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #0d6efd;
+} 
