@@ -1,4 +1,4 @@
-# 📅 FR.CRCE Event Hosting & Management Platform
+# 📅 EventFinder - FR.CRCE Event Hosting & Management Platform
 
 A MERN stack web application built for **Fr. Conceicao Rodrigues College of Engineering (FR.CRCE)** to host and manage college events and hackathons. The platform allows students to register, log in, and participate in events. It also includes an admin dashboard where admins can securely log in and manage events independently from student users.
 
