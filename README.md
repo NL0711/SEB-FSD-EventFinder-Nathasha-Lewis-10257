@@ -79,5 +79,5 @@ For academic/institutional use at **FR.CRCE**
 
 ## 📜 License
 
-This project is licensed for educational and internal use only.
+This project is licensed under MIT License.
 
