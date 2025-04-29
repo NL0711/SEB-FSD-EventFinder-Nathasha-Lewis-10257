@@ -1,19 +1,18 @@
 "use client"
 
 import { useContext, useEffect, useState } from "react"
-import { deleteApplicantAPI, getApplicantDetailsAPI } from "../services/allAPI"
+import { deleteApplicantAPI, getApplicantDetailsAPI } from "../../services/allAPI"
 import { useParams } from "react-router-dom"
-import { isApplicantDetailsUpdatedContext } from "../contexts/ContextAPI"
+import { isApplicantDetailsUpdatedContext } from "../../contexts/ContextAPI"
 
 const ApplicantManagement = () => {
   const { isApplicantUpdated, setIsApplicantUpdated } = useContext(isApplicantDetailsUpdatedContext)
   const [appliedEventsDetails, setAppliedEventsDetails] = useState("")
   const [applicantStatus, setApplicantStatus] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
-  // console.log(appliedEvents);
+  
   const { id } = useParams()
-  // console.log(id);
-  console.log(appliedEventsDetails)
+  
 
   useEffect(() => {
     if (id) getApplicantDetails()
@@ -27,11 +26,10 @@ const ApplicantManagement = () => {
       }
       try {
         const result = await deleteApplicantAPI(id, email, reqHeader)
-        console.log(result)
-
+        
         if (result.status == 200) {
           alert("Applicant removal is successfull!!")
-          // Update the state immediately
+          
           setAppliedEventsDetails((prevState) => ({
             ...prevState,
             registeredUser: prevState.registeredUser.filter((user) => user.email !== email),
@@ -39,7 +37,7 @@ const ApplicantManagement = () => {
           setApplicantStatus((prev) => !prev)
         }
       } catch (err) {
-        console.log(err)
+       alert("Failed to remove applicant.")
       }
     }
   }
@@ -52,13 +50,11 @@ const ApplicantManagement = () => {
       }
       try {
         const result = await getApplicantDetailsAPI(id, reqHeader)
-        // console.log(result);
-
+        
         if (result.status == 200) {
           setAppliedEventsDetails(result.data)
         }
       } catch (err) {
-        console.log(err)
       } finally {
         setIsLoading(false)
         setIsApplicantUpdated(false)
@@ -81,7 +77,7 @@ const ApplicantManagement = () => {
         </thead>
         <tbody>
           {isLoading ? (
-            <div className="text-center">Loading...</div>
+            <tr><td colSpan="6" className="text-center">Loading...</td></tr> 
           ) : appliedEventsDetails && appliedEventsDetails.registeredUser.length > 0 ? (
             appliedEventsDetails.registeredUser.map((user, index) => (
               <tr key={index + 1}>
@@ -98,7 +94,7 @@ const ApplicantManagement = () => {
               </tr>
             ))
           ) : (
-            <div className="text-danger fw-bolder">No applicants yet!!!</div>
+            <tr><td colSpan="6" className="text-danger fw-bolder text-center">No applicants yet!!!</td></tr> 
           )}
         </tbody>
       </table>

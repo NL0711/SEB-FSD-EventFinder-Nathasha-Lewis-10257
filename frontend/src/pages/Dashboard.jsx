@@ -2,15 +2,15 @@
 
 import { useEffect, useState } from "react"
 import { Row, Col, Container, Nav, Tab, Card, Badge, Button } from "react-bootstrap"
-import Profile from "../components/Profile"
-import MyEvents from "../components/MyEvents"
-import AddEvent from "../components/AddEvent"
-import SavedEvents from "../components/SavedEvents"
-import AppliedEvents from "../components/AppliedEvents"
-// import PastEvents from "../components/PastEvents"
+import Profile from "../components/Dashboard/Profile"
+import MyEvents from "../components/Dashboard/MyEvents"
+import AddEventModal from "../components/Event/AddEventModal"
+import SavedEvents from "../components/Dashboard/SavedEvents"
+import AppliedEvents from "../components/Dashboard/AppliedEvents"
 
 function Dashboard() {
   const [username, setUsername] = useState("")
+  const [email, setEmail] = useState("") 
   const [showAddEventModal, setShowAddEventModal] = useState(false);
   const handleShowAddEventModal = () => setShowAddEventModal(true);
   const handleCloseAddEventModal = () => setShowAddEventModal(false);
@@ -19,6 +19,7 @@ function Dashboard() {
     if (sessionStorage.getItem("existingUser")) {
       const user = JSON.parse(sessionStorage.getItem("existingUser"))
       setUsername(user.username)
+      setEmail(user.email) 
     }
   }, [])
 
@@ -41,6 +42,7 @@ function Dashboard() {
                   </div>
                   <div className="flex-grow-1">
                     <h2 className="mb-1">Welcome, {username}</h2>
+                    {email && <p className="text-muted mb-2"><i className="fa-solid fa-envelope me-2"></i>{email}</p>}
                     <p className="text-muted mb-0">Manage your events and profile from your personal dashboard</p>
                   </div>
                 </div>
@@ -96,28 +98,26 @@ function Dashboard() {
             </Col>
 
             <Col md={9}>
-              <Card className="shadow-sm">
-                <Tab.Content>
-                  <Tab.Pane eventKey="profile">
-                    <Profile />
-                  </Tab.Pane>
-                  <Tab.Pane eventKey="myEvents">
-                    <MyEvents />
-                  </Tab.Pane>
-                  <Tab.Pane eventKey="savedEvents">
-                    <SavedEvents />
-                  </Tab.Pane>
-                  <Tab.Pane eventKey="appliedEvents">
-                    <AppliedEvents />
-                  </Tab.Pane>
-                </Tab.Content>
-              </Card>
+              <Tab.Content>
+                <Tab.Pane eventKey="profile">
+                  <Profile />
+                </Tab.Pane>
+                <Tab.Pane eventKey="myEvents">
+                  <MyEvents />
+                </Tab.Pane>
+                <Tab.Pane eventKey="savedEvents">
+                  <SavedEvents />
+                </Tab.Pane>
+                <Tab.Pane eventKey="appliedEvents">
+                  <AppliedEvents />
+                </Tab.Pane>
+              </Tab.Content>
             </Col>
           </Row>
         </Tab.Container>
       </Container>
       
-      <AddEvent 
+      <AddEventModal 
         show={showAddEventModal} 
         handleClose={handleCloseAddEventModal} 
       />

@@ -45,7 +45,27 @@ const eventSchema = new mongoose.Schema({
     required: true,
   },
   tags: {
+    type: [String],
+    default: [],
+  },
+  image: {
     type: String,
+  },
+  organizer: {
+    type: String,
+    required: true,
+  },
+  maxRegistrations: {
+    type: Number,
+    min: 0,
+  },
+  eligibility: {
+    type: [String],
+    default: [],
+  },
+  registrationRequirements: {
+    type: [String],
+    default: [],
   },
   userId: {
     type: String,

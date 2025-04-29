@@ -7,16 +7,17 @@ import Auth from "./pages/Auth"
 import Dashboard from "./pages/Dashboard"
 import EventDetail from "./pages/EventDetail"
 import AllEvents from "./pages/AllEvents"
-import Footer from "./components/Footer"
-import Header from "./components/Header"
+import Footer from "./components/Layout/Footer"
+import Header from "./components/Layout/Header"
 import { useContext, useEffect } from "react"
 import { tokenAuthContext } from "./contexts/AuthContextAPI"
+import AppliedEventsProvider from "./contexts/AppliedEventsContext"
+import SavedEventsProvider from "./contexts/SavedEventsContext"
 
 function App() {
   const { isAuthorised, setIsAuthorised } = useContext(tokenAuthContext)
-  const location = useLocation() // to get the current location
+  const location = useLocation()
 
-  // Determine if the current page is 'AllEvents' or 'Dashboard'
   const isAllEventsPage = location.pathname === "/all-events"
   const isDashboardPage = location.pathname === "/dashboard"
   const isEventDetailPage = location.pathname.includes("/event")
@@ -31,27 +32,36 @@ function App() {
   }, [])
 
   return (
-    <>
-      <Header
-        isAllEventsPage={isAllEventsPage}
-        isDashboardPage={isDashboardPage}
-        isEventDetailPage={isEventDetailPage}
-        isHomePage={isHomePage}
-      />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/event/:id" element={<EventDetail />} />
-        {isAuthorised && (
-          <>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/all-events" element={<AllEvents />} />
-          </>
-        )}
-        <Route path="/login" element={<Auth insideRegister={false} />} />
-      </Routes>
-
-      <Footer />
-    </>
+    <SavedEventsProvider>
+      <AppliedEventsProvider>
+        <>
+          <Header
+            isAllEventsPage={isAllEventsPage}
+            isDashboardPage={isDashboardPage}
+            isEventDetailPage={isEventDetailPage}
+            isHomePage={isHomePage}
+          />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/event/:id" element={<EventDetail />} />
+            {isAuthorised ? (
+              <>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/all-events" element={<AllEvents />} />
+              </>
+            ) : (
+              <>
+                <Route path="/dashboard" element={<Auth insideRegister={false} />} />
+                <Route path="/all-events" element={<Auth insideRegister={false} />} />
+              </>
+            )}
+            <Route path="/login" element={<Auth insideRegister={false} />} />
+            <Route path="/register" element={<Auth insideRegister={true} />} />
+          </Routes>
+          <Footer />
+        </>
+      </AppliedEventsProvider>
+    </SavedEventsProvider>
   )
 }
 

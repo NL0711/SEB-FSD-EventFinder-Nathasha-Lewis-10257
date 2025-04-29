@@ -1,9 +1,6 @@
 const jwt = require("jsonwebtoken")
 
 const jwtMiddleware = (req, res, next) => {
-  console.log("Inside jwtMiddlware")
-  // const token = req.headers["authorization"].split(" ")[1]
-  // console.log(token);
   const authHeader = req.headers.authorization
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -11,29 +8,24 @@ const jwtMiddleware = (req, res, next) => {
   }
 
   const token = authHeader.split(" ")[1]
-  // console.log(token);
 
   if (token) {
     try {
       const jwtResponse = jwt.verify(token, process.env.JWTPASSWORD || "fallbacksecret")
-      // console.log(jwtResponse);
 
       req.userId = jwtResponse.userId
       req.userEmail = jwtResponse.email
       
       if (!req.userEmail) {
-        console.error("Email not found in JWT token payload!");
         return res.status(401).json("Authorization failed... Invalid token payload.");
       }
       
       next()
     } catch (err) {
-      res.status(401).json("Authorisation failed... Please Login!!!")
-      console.log(err)
+      res.status(401).json("Authorization failed... Please Login!!!")
     }
   } else {
     res.status(404).json("Authorization failed... Token is Missing!!!")
-    console.log("Authorization failed... Token is Missing!!!")
   }
 }
 

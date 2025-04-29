@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Button, Form, Modal } from "react-bootstrap"
-import { applyEventAPI } from "../services/allAPI"
+import { applyEventAPI } from "../../services/allAPI"
 import { useNavigate } from "react-router-dom"
 
 // Modified to take props
@@ -53,7 +53,7 @@ const Register = ({ eventId, eventTitle, variant = "primary", className = "", si
         userId = userData._id
       }
     } catch (err) {
-      console.error("Error parsing user data:", err)
+      // console.error("Error parsing user data:", err) // Remove console
     }
     
     // Prepare request body with the event ID
@@ -85,8 +85,7 @@ const Register = ({ eventId, eventTitle, variant = "primary", className = "", si
         alert(errorMessage);
       }
     } catch (err) {
-      // Log the error and show a generic message
-      console.error("Registration API error:", err);
+      // console.error("Registration API error:", err); // Remove console
       alert("An error occurred during registration. Please try again.")
     }
   }

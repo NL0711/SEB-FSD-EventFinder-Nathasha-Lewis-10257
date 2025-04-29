@@ -7,11 +7,7 @@ const AuthContextAPI = ({ children }) => {
   const [isAuthorised, setIsAuthorised] = useState(false)
 
   useEffect(() => {
-    if (sessionStorage.getItem("token")) {
-      setIsAuthorised(true)
-    } else {
-      setIsAuthorised(false)
-    }
+    setIsAuthorised(!!sessionStorage.getItem("token"));
   }, [])
 
   return <tokenAuthContext.Provider value={{ isAuthorised, setIsAuthorised }}>{children}</tokenAuthContext.Provider>

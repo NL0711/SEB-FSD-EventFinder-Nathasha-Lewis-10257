@@ -1,19 +1,25 @@
 import { Card, Button, Badge } from "react-bootstrap"
 import { useNavigate } from "react-router-dom"
-import Register from "./Register"
-import { useContext } from 'react';
-import { AppliedEventsContext } from '../contexts/AppliedEventsContext';
+import Register from "../Auth/Register"
+import { useContext, useState } from 'react';
+import { AppliedEventsContext } from '../../contexts/AppliedEventsContext';
+import { SavedEventsContext } from '../../contexts/SavedEventsContext';
+import { saveEventAPI, removeSavedEventAPI } from '../../services/allAPI';
+import { tokenAuthContext } from "../../contexts/AuthContextAPI";
 
 function EventCard({ displayData = {}, image, insideMyEvents = false, insideSavedEvents = false }) {
+  const { isAuthorised } = useContext(tokenAuthContext);
   const { appliedEventIds, isLoadingStatus } = useContext(AppliedEventsContext);
+  const { savedEventIds, addSavedEventId, removeSavedEventId, isLoadingSavedStatus } = useContext(SavedEventsContext);
+  
+  const [isSaving, setIsSaving] = useState(false);
 
   const isApplied = appliedEventIds.has(displayData?._id?.toString());
+  const isSaved = savedEventIds.has(displayData?._id?.toString());
   
-  console.log(`[EventCard] Rendering card for: ${displayData.eventName || 'N/A'}. ID: ${displayData?._id}, Is Applied (from context)?: ${isApplied}`);
-
   const navigate = useNavigate();
 
-  if (!displayData || Object.keys(displayData).length === 0) {
+  if (!displayData || Object.keys(displayData).length === 0 || !displayData._id) {
     return (
       <Card className="event-card shadow-sm h-100" style={{ width: "18rem" }}>
         <Card.Body className="d-flex justify-content-center align-items-center">
@@ -27,10 +33,42 @@ function EventCard({ displayData = {}, image, insideMyEvents = false, insideSave
   }
 
   const handleViewDetails = () => {
-    if (displayData._id) {
-      navigate(`/event/${displayData._id}`);
-    } else {
-      console.error("No event ID available for navigation");
+    navigate(`/event/${displayData._id}`);
+  };
+
+  const handleToggleSave = async () => {
+    if (!isAuthorised) {
+      alert("Please login to save events.");
+      navigate("/login");
+      return;
+    }
+
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+       alert("Authentication error. Please log in again.");
+       return;
+    }
+
+    const reqHeader = { Authorization: `Bearer ${token}` };
+    const reqBody = { eventId: displayData._id };
+    
+    setIsSaving(true);
+    try {
+      if (isSaved) {
+        const result = await removeSavedEventAPI(reqBody, reqHeader);
+        if (result.status === 200) {
+          removeSavedEventId(displayData._id);
+        }
+      } else {
+        const result = await saveEventAPI(reqBody, reqHeader);
+        if (result.status === 201) {
+          addSavedEventId(displayData._id);
+        }
+      }
+    } catch (error) {
+      // alert("An error occurred while updating saved status."); // Remove alert
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -47,21 +85,39 @@ function EventCard({ displayData = {}, image, insideMyEvents = false, insideSave
 
   return (
     <Card className="event-card shadow-sm h-100">
-      <div
+      <div 
+        className="position-relative"
         style={{
           height: "140px",
           background: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${image || displayData.image || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1000&auto=format&fit=crop"})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
-      ></div>
+      >
+      </div>
       <Card.Body>
         <div className="d-flex justify-content-between align-items-start mb-2">
-          <Card.Title className="mb-0 fs-5">{displayData.eventName || "Untitled Event"}</Card.Title>
-          <Badge bg="warning" text="dark" className="rounded-pill">
-            {displayData.eventType || "Uncategorized"}
-          </Badge>
+          <Card.Title className="mb-0 fs-5 me-2">{displayData.eventName || "Untitled Event"}</Card.Title>
+          {isAuthorised && (
+            <Button 
+              variant="link" 
+              className="p-0 text-warning"
+              onClick={handleToggleSave}
+              disabled={isSaving || isLoadingSavedStatus}
+              title={isSaved ? "Remove from saved" : "Save event"}
+              style={{ textDecoration: 'none' }}
+            >
+              {isSaving || isLoadingSavedStatus ? (
+                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              ) : (
+                <i className={`${isSaved ? 'fa-solid' : 'fa-regular'} fa-bookmark fa-lg`}></i>
+              )}
+            </Button>
+          )}
         </div>
+        <Badge bg="white" text="primary" className="rounded-pill mb-2 border">
+          {displayData.eventType || "Uncategorized"}
+        </Badge>
         <Card.Text className="small text-muted mb-2">
           <i className="fa-solid fa-calendar-days me-2"></i>
           {formatDate(displayData.startDate, displayData.endDate)}

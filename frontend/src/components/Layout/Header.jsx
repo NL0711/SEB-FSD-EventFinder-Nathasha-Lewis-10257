@@ -3,8 +3,8 @@
 import { useContext } from "react"
 import { Container, Navbar, Nav } from "react-bootstrap"
 import { Link, useNavigate } from "react-router-dom"
-import { tokenAuthContext } from "../contexts/AuthContextAPI"
 import "./Header.css"
+import { tokenAuthContext } from "../../contexts/AuthContextAPI"
 
 const Header = ({ isAllEventsPage, isDashboardPage, isEventDetailPage, isHomePage }) => {
   const { isAuthorised, setIsAuthorised } = useContext(tokenAuthContext)
@@ -18,7 +18,6 @@ const Header = ({ isAllEventsPage, isDashboardPage, isEventDetailPage, isHomePag
 
   return (
     <>
-      {/* Main header with logo and navigation */}
       <Navbar bg="white" expand="lg" className="py-3 shadow-sm">
         <Container>
           <Navbar.Brand as={Link} to="/" className="d-flex align-items-center">

@@ -53,7 +53,6 @@ function Auth() {
         setErrorMsg(result.response?.data || "Login failed. Please check your credentials.")
       }
     } catch (err) {
-      console.error("Login error:", err)
       setErrorMsg("Invalid credentials or user not found.")
     } finally {
       setIsLoading(false)
@@ -68,7 +67,6 @@ function Auth() {
             <Card className="shadow-lg border-0">
               <Card.Body className="p-5">
                 <div className="text-center mb-4">
-                  <h2 className="text-primary">Welcome Back</h2>
                   <p className="text-muted">Login to access your EventFinder account</p>
                 </div>
 

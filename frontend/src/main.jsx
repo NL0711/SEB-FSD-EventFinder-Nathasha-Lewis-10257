@@ -7,17 +7,19 @@ import { BrowserRouter } from "react-router-dom"
 import AuthContextAPI from "./contexts/AuthContextAPI.jsx"
 import ContextApi from "./contexts/ContextAPI.jsx"
 import AppliedEventsProvider from "./contexts/AppliedEventsContext.jsx"
-ContextApi
+import SavedEventsProvider from "./contexts/SavedEventsContext.jsx"
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <AuthContextAPI>
       <AppliedEventsProvider>
-        <ContextApi>
-          <BrowserRouter>
-            <App />
-          </BrowserRouter>
-        </ContextApi>
+        <SavedEventsProvider>
+          <ContextApi>
+            <BrowserRouter>
+              <App />
+            </BrowserRouter>
+          </ContextApi>
+        </SavedEventsProvider>
       </AppliedEventsProvider>
     </AuthContextAPI>
   </StrictMode>,

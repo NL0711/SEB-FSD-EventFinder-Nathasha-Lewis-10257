@@ -1,154 +1,76 @@
 "use client"
 
 import { useContext, useEffect, useState } from "react"
-import { Card, Container, Row, Col, Button, Carousel } from "react-bootstrap"
-import { Link, useNavigate } from "react-router-dom"
+import { Container, Row, Col, Carousel, Card } from "react-bootstrap"
+import { Link } from "react-router-dom"
 import { tokenAuthContext } from "../contexts/AuthContextAPI"
-import { getHomeEventsAPI } from "../services/allAPI"
-import Register from "../components/Register"
-import { AppliedEventsContext } from "../contexts/AppliedEventsContext"
+import { getAllEventsAPI } from "../services/allAPI"
+import NoticeBoard from "../components/Home/NoticeBoard"
+import FeaturedEvents from "../components/Home/FeaturedEvents"
 
 const Home = () => {
-  const [homeEvents, setHomeEvents] = useState([])
+  const [allEvents, setAllEvents] = useState([]);
+  const [uniqueEventTypes, setUniqueEventTypes] = useState([]);
+  const [activeEventType, setActiveEventType] = useState("All");
+  const [filteredFeaturedEvents, setFilteredFeaturedEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
   const [activeIndex, setActiveIndex] = useState(0)
   const { isAuthorised, setIsAuthorised } = useContext(tokenAuthContext)
-  const { appliedEventIds, isLoadingStatus } = useContext(AppliedEventsContext)
-  const navigate = useNavigate();
 
   useEffect(() => {
     const token = sessionStorage.getItem("token")
     setIsAuthorised(!!token)
-    getHomeProjects()
+    fetchEventsAndCategories();
   }, [])
 
-  const getHomeProjects = async () => {
+  const fetchEventsAndCategories = async () => {
+    setLoading(true);
     try {
-      // Get token if available
       const token = sessionStorage.getItem("token");
       const reqHeader = token ? { Authorization: `Bearer ${token}` } : {};
       
-      const result = await getHomeEventsAPI(reqHeader);
-      if (result.status === 200) {
-        setHomeEvents(result.data);
+      const result = await getAllEventsAPI(reqHeader);
+      if (result.status === 200 && Array.isArray(result.data)) {
+        const fetchedEvents = result.data;
+        setAllEvents(fetchedEvents);
+
+        const eventTypesSet = new Set(fetchedEvents.map(event => event.eventType?.trim()).filter(Boolean));
+        const sortedEventTypes = ["All", ...Array.from(eventTypesSet).sort((a, b) => a.localeCompare(b))];
+        setUniqueEventTypes(sortedEventTypes);
+
+      } else {
+        setAllEvents([]);
+        setUniqueEventTypes(["All"]);
       }
     } catch (err) {
-      console.error("Error fetching home events:", err);
+      setAllEvents([]);
+      setUniqueEventTypes(["All"]);
+    } finally {
+       setLoading(false);
     }
   }
-
-  // Featured events data
-  const featuredEvents = [
-    {
-      _id: 1,
-      eventName: "Heart and Sole Run 7",
-      eventDescription: "Annual charity marathon supporting heart health awareness and research.",
-      eventWebsite: "https://heartandsolerun.org",
-      startDate: "2023-05-15",
-      endDate: "2023-05-15",
-      startTime: "07:00 AM",
-      endTime: "11:00 AM",
-      location_city: "CRCE",
-      location_state: "Bandra West",
-      audienceType: "All Ages",
-      eventType: "Sports",
-      tags: "marathon, charity, health",
-      userId: "admin123",
-      image: "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?q=80&w=1000&auto=format&fit=crop",
-      organizer: "Rotaract Club"
-    },
-    {
-      _id: 2,
-      eventName: "Bit and Build",
-      eventDescription: "Hackathon and coding competition for innovative software solutions.",
-      eventWebsite: "https://bitandbuild.tech",
-      startDate: "2023-06-10",
-      endDate: "2023-06-12",
-      startTime: "09:00 AM",
-      endTime: "05:00 PM",
-      location_city: "CRCE",
-      location_state: "Bandra West",
-      audienceType: "Professional",
-      eventType: "Technology",
-      tags: "hackathon, coding, tech",
-      userId: "admin123",
-      image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1000&auto=format&fit=crop",
-      organizer: "GDSC (Google Developer Student Club)"
-    },
-    {
-      _id: 3,
-      eventName: "Athlead",
-      eventDescription: "Sports leadership summit featuring renowned athletes and coaches.",
-      eventWebsite: "https://athlead-summit.com",
-      startDate: "2023-07-22",
-      endDate: "2023-07-23",
-      startTime: "10:00 AM",
-      endTime: "06:00 PM",
-      location_city: "CRCE",
-      location_state: "Bandra West",
-      audienceType: "Professional",
-      eventType: "Conference",
-      tags: "sports, leadership, networking",
-      userId: "admin123",
-      image: "https://images.unsplash.com/photo-1517649763962-0c623066013b?q=80&w=1000&auto=format&fit=crop",
-      organizer: "Rotaract Club"
-    },
-    {
-      _id: 4,
-      eventName: "CRMD",
-      eventDescription: "Creative Media Design exhibition showcasing student projects.",
-      eventWebsite: "https://crmd-exhibition.edu",
-      startDate: "2023-08-05",
-      endDate: "2023-08-07",
-      startTime: "09:00 AM",
-      endTime: "08:00 PM",
-      location_city: "CRCE",
-      location_state: "Bandra West",
-      audienceType: "Students",
-      eventType: "Exhibition",
-      tags: "design, art, student",
-      userId: "admin123",
-      image: "https://images.unsplash.com/photo-1626785774573-4b799315345d?q=80&w=1000&auto=format&fit=crop",
-      organizer: "STUCO (Student Council)"
-    },
-    {
-      _id: 5,
-      eventName: "Prakalp",
-      eventDescription: "Project competition for hardware and software innovations with prizes.",
-      eventWebsite: "https://prakalp-competition.org",
-      startDate: "2023-09-19",
-      endDate: "2023-09-20",
-      startTime: "10:00 AM",
-      endTime: "04:00 PM",
-      location_city: "CRCE",
-      location_state: "Bandra West",
-      audienceType: "Students",
-      eventType: "Competition",
-      tags: "innovation, projects, technology",
-      userId: "admin123",
-      image: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop",
-      organizer: "IEEE"
-    },
-  ]
+  
+  useEffect(() => {
+    const eventsToFilter = activeEventType === "All" 
+      ? allEvents 
+      : allEvents.filter(event => event.eventType?.includes(activeEventType));
+    setFilteredFeaturedEvents(eventsToFilter.slice(0, 5));
+  }, [activeEventType, allEvents]);
 
   const handleSelect = (selectedIndex) => {
     setActiveIndex(selectedIndex)
   }
 
-  const handleViewDetails = (eventId) => {
-    // Treat all events (including demo ones) as real events
-    navigate(`/event/${eventId}`);
-  };
-
   return (
     <>
-      {/* Carousel Section */}
       <Carousel activeIndex={activeIndex} onSelect={handleSelect} className="mb-4">
-        {featuredEvents.map((event, idx) => (
-          <Carousel.Item key={idx}>
+        {allEvents.slice(0, 5).map((event) => (
+          <Carousel.Item key={event._id}>
             <div
               style={{
                 height: "400px",
-                background: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(${event.image})`,
+                background: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(${event.image || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1000&auto=format&fit=crop'})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
               }}
@@ -162,85 +84,60 @@ const Home = () => {
           </Carousel.Item>
         ))}
       </Carousel>
-
-      {/* Quick Links Section */}
+      
       <Container className="mb-5">
         <Row>
           <Col md={3}>
-            <div className="bg-warning text-dark p-3 mb-4">
-              <h5 className="border-bottom pb-2">NOTICE BOARD</h5>
-              <ul className="list-unstyled">
-                <li className="py-2 border-bottom">
-                  <small className="d-block text-muted">04 May 2023</small>
-                  Registration open for Heart and Sole Run 7
-                </li>
-                <li className="py-2 border-bottom">
-                  <small className="d-block text-muted">10 May 2023</small>
-                  Bit and Build hackathon schedule announced
-                </li>
-                <li className="py-2">
-                  <small className="d-block text-muted">15 May 2023</small>
-                  Athlead speaker lineup confirmed
-                </li>
-              </ul>
-            </div>
-            
-            <div className="bg-primary text-white p-3">
-              <h5 className="border-bottom pb-2">UPCOMING HACKATHONS</h5>
+            <NoticeBoard />
+
+            <div className="bg-white text-primary p-3 shadow-sm border mb-4"> 
+              <h5 className="border-bottom pb-2 text-primary">UPCOMING HACKATHONS</h5>
               <ul className="list-unstyled">
                 <li className="py-2 border-bottom">
                   <a href="https://unstop.com/hackathons/hack-ai-thon-techfest-iit-bombay-indian-institute-of-technology-iit-bombay-mumbai-maharashtra-615291" 
-                     target="_blank" 
-                     rel="noopener noreferrer" 
-                     className="text-white text-decoration-none">
+                     target="_blank" rel="noopener noreferrer" className="text-primary text-decoration-none">
                     <div className="d-flex align-items-center">
-                      <div className="bg-white text-primary rounded p-1 me-2 d-flex align-items-center justify-content-center" style={{width: "24px", height: "24px"}}>
+                      <div className="bg-primary text-white rounded p-1 me-2 d-flex align-items-center justify-content-center" style={{width: "24px", height: "24px"}}>
                         <i className="fa-solid fa-code fa-sm"></i>
                       </div>
                       <div>
                         <strong>Hack-AI-Thon</strong>
-                        <small className="d-block">TechFest IIT Bombay | May 25-28</small>
+                        <small className="d-block text-muted">TechFest IIT Bombay | May 25-28</small>
                       </div>
                     </div>
                   </a>
                 </li>
                 <li className="py-2 border-bottom">
                   <a href="https://unstop.com/hackathons/picsart-ai-research-hackathon-pair-picsart-ai-research-634111" 
-                     target="_blank" 
-                     rel="noopener noreferrer" 
-                     className="text-white text-decoration-none">
+                     target="_blank" rel="noopener noreferrer" className="text-primary text-decoration-none">
                     <div className="d-flex align-items-center">
-                      <div className="bg-white text-primary rounded p-1 me-2 d-flex align-items-center justify-content-center" style={{width: "24px", height: "24px"}}>
+                      <div className="bg-primary text-white rounded p-1 me-2 d-flex align-items-center justify-content-center" style={{width: "24px", height: "24px"}}>
                         <i className="fa-solid fa-robot fa-sm"></i>
                       </div>
                       <div>
                         <strong>Picsart AI Research Hackathon</strong>
-                        <small className="d-block">Picsart | June 5-12</small>
+                        <small className="d-block text-muted">Picsart | June 5-12</small>
                       </div>
                     </div>
                   </a>
                 </li>
                 <li className="py-2 border-bottom">
                   <a href="https://devfolio.co/hackathons" 
-                     target="_blank" 
-                     rel="noopener noreferrer" 
-                     className="text-white text-decoration-none">
+                     target="_blank" rel="noopener noreferrer" className="text-primary text-decoration-none">
                     <div className="d-flex align-items-center">
-                      <div className="bg-white text-primary rounded p-1 me-2 d-flex align-items-center justify-content-center" style={{width: "24px", height: "24px"}}>
+                      <div className="bg-primary text-white rounded p-1 me-2 d-flex align-items-center justify-content-center" style={{width: "24px", height: "24px"}}>
                         <i className="fa-solid fa-cube fa-sm"></i>
                       </div>
                       <div>
                         <strong>ETHIndia 2023</strong>
-                        <small className="d-block">Ethereum Foundation | July 15-17</small>
+                        <small className="d-block text-muted">Ethereum Foundation | July 15-17</small>
                       </div>
                     </div>
                   </a>
                 </li>
                 <li className="py-2">
                   <a href="https://devfolio.co/hackathons" 
-                     target="_blank" 
-                     rel="noopener noreferrer" 
-                     className="text-white text-decoration-none d-flex justify-content-center">
+                     target="_blank" rel="noopener noreferrer" className="text-primary text-decoration-none d-flex justify-content-center">
                     <div className="d-flex align-items-center">
                       <i className="fa-solid fa-arrow-right me-1"></i>
                       <span>View All Hackathons</span>
@@ -249,10 +146,35 @@ const Home = () => {
                 </li>
               </ul>
             </div>
+            
+            <Card className="shadow-sm mt-4">
+              <Card.Header className="bg-warning text-white">
+                <h5 className="mb-0">PAST EVENTS</h5>
+              </Card.Header>
+              <Card.Body>
+                <ul className="list-unstyled mb-0">
+                  <li className="mb-3 pb-3 border-bottom">
+                    <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8dGVjaCUyMGV4cG98ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60" alt="Tech Expo Image" className="img-fluid rounded mb-2" style={{height: '80px', width: '100%', objectFit: 'cover'}} />
+                    <p className="fw-bold small mb-1">Tech Expo 2023 Concluded</p>
+                    <p className="text-muted small mb-0">01 Apr 2023</p>
+                  </li>
+                  <li className="mb-3 pb-3 border-bottom">
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTB8fGNvZGluZyUyMGNoYWxsZW5nZXxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60" alt="Coding Challenge Image" className="img-fluid rounded mb-2" style={{height: '80px', width: '100%', objectFit: 'cover'}} />
+                    <p className="fw-bold small mb-1">Annual Coding Challenge Winners Announced</p>
+                    <p className="text-muted small mb-0">15 Mar 2023</p>
+                  </li>
+                  <li className="mb-3 pb-3">
+                    <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Nnx8Z3Vlc3QlMjBsZWN0dXJlfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60" alt="Guest Lecture Image" className="img-fluid rounded mb-2" style={{height: '80px', width: '100%', objectFit: 'cover'}} />
+                    <p className="fw-bold small mb-1">Guest Lecture on AI Ethics Held</p>
+                    <p className="text-muted small mb-0">20 Feb 2023</p>
+                  </li>
+                </ul>
+              </Card.Body>
+            </Card>
           </Col>
 
           <Col md={9}>
-            <div className="bg-light p-4 rounded shadow-sm mb-4">
+            <div className="p-4 rounded shadow-sm mb-4">
               <Row className="align-items-center">
                 <Col lg={7}>
                   <h2 className="text-primary mb-4">Welcome to EventFinder</h2>
@@ -280,67 +202,13 @@ const Home = () => {
               </Row>
             </div>
 
-            {/* Featured Events Grid */}
-            <h3 className="text-center mb-4">Featured Events</h3>
-            <Row>
-              {featuredEvents.map((event, idx) => {
-                // Determine applied status for this event
-                const isApplied = appliedEventIds.has(event._id?.toString());
-                console.log(`[Home] Rendering card for: ${event.eventName}. ID: ${event._id}, Is Applied?: ${isApplied}`);
-                
-                return (
-                  <Col md={4} key={idx} className="mb-4">
-                    <Card className="h-100 shadow-sm hover-shadow">
-                      <div
-                        style={{
-                          height: "120px",
-                          background: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${event.image})`,
-                          backgroundSize: "cover",
-                          backgroundPosition: "center",
-                        }}
-                      ></div>
-                      <Card.Body>
-                        <Card.Title className="fw-bold">{event.eventName}</Card.Title>
-                        <Card.Text className="small text-muted mb-2">
-                          {new Date(event.startDate).toLocaleDateString()}
-                        </Card.Text>
-                        <Card.Text className="small mb-2">{event.eventDescription}</Card.Text>
-                        <Card.Text className="small text-primary">
-                          <strong>By:</strong> {event.organizer}
-                        </Card.Text>
-                      </Card.Body>
-                      <Card.Footer className="bg-white border-0 d-flex gap-2">
-                        <Button 
-                          variant="outline-primary" 
-                          size="sm" 
-                          className="w-50" 
-                          onClick={() => handleViewDetails(event._id)}
-                        >
-                          Details
-                        </Button>
-                        {/* Conditional Button Rendering */}
-                        {isLoadingStatus ? (
-                          <Button variant="secondary" size="sm" disabled className="w-50">
-                            Loading...
-                          </Button>
-                        ) : isApplied ? (
-                          <Button variant="success" size="sm" disabled className="w-50">
-                              <i className="fa-solid fa-check me-1"></i> Applied
-                          </Button>
-                        ) : (
-                          <Register 
-                            eventId={event._id} 
-                            eventTitle={event.eventName} 
-                            size="sm"
-                            className="w-50" 
-                          />
-                        )}
-                      </Card.Footer>
-                    </Card>
-                  </Col>
-                )}
-              )}
-            </Row>
+            <FeaturedEvents 
+              uniqueEventTypes={uniqueEventTypes}
+              activeEventType={activeEventType}
+              setActiveEventType={setActiveEventType}
+              loading={loading}
+              filteredFeaturedEvents={filteredFeaturedEvents}
+            />
           </Col>
         </Row>
       </Container>
@@ -348,4 +216,4 @@ const Home = () => {
   )
 }
 
-export default Home
+export default Home;
