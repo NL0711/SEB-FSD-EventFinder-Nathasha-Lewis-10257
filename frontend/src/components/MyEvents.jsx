@@ -41,7 +41,7 @@ const MyEvents = () => {
             </Col>
           ))
         ) : (
-          <div className="text-danger fw-bolder">Event not found!!!</div>
+          null
         )}
       </Row>
     </div>

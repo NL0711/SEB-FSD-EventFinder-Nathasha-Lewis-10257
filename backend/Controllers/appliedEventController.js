@@ -38,12 +38,13 @@ exports.getUserAppliedEvents = async (req, res) => {
   try {
     console.log("Inside getUserAppliedEvents Controller")
 
-    const userId = req.userId
-    console.log("User ID:", userId)
+    // Use email from token for lookup
+    const userEmail = req.userEmail 
+    console.log("User Email from token:", userEmail)
 
-    // Find events where the user exists in the `registeredUser` array
+    // Find events where the user's email exists in the `registeredUser` array
     const events = await appliedEvents.find(
-      { "registeredUser.userId": userId }, // Match user inside `registeredUser`
+      { "registeredUser.email": userEmail }, // Match user's email inside `registeredUser`
       { eventId: 1, _id: 0 }, // Return only eventId, exclude _id
     )
 
@@ -82,30 +83,37 @@ exports.getApplicationDetails = async (req, res) => {
 // check if applied or not by current user
 exports.checkApplyStatusController = async (req, res) => {
   console.log("Inside checkApplyStatusController")
-  const id = req.params.id
-  const userId = req.userId
-  try {
-    // console.log("inside try");
+  const id = req.params.id // Event ID
+  // Use email from token (attached by jwtMiddleware)
+  const userEmail = req.userEmail 
+  
+  if (!userEmail) {
+      console.error("Email not found in request (check jwtMiddleware)");
+      return res.status(401).json("Authorization Error: User email missing.");
+  }
 
+  try {
+    console.log(`Checking status for event: ${id}, user email: ${userEmail}`);
     const existingEvent = await appliedEvents.findOne({ eventId: id })
     if (existingEvent) {
-      // console.log("event existing");
-
-      const alreadyApplied = existingEvent.registeredUser.some((user) => user.userId === userId)
+      // Check if any user in the array matches the TOKEN's email
+      const alreadyApplied = existingEvent.registeredUser.some((user) => user.email === userEmail);
 
       if (alreadyApplied) {
-        // console.log("User has already applied.");
+        console.log(`User ${userEmail} has already applied for event ${id}.`);
         return res.status(200).json("You have already applied for this event")
+      } else {
+         console.log(`User ${userEmail} has NOT applied for event ${id} (event found, user not in list).`);
+         // Return 406 to indicate event exists but user hasn't applied
+         return res.status(406).json("You have not applied for this event yet") 
       }
-
-      // console.log("not applied");
-      return res.status(406).json(existingEvent)
     } else {
-      res.status(404).json("not applied")
+      console.log(`No application record found for event ${id}.`);
+      res.status(404).json("Event application record not found") // Event application record doesn't exist
     }
   } catch (err) {
     console.log(err)
-    res.status(401).json(err)
+    res.status(500).json("Internal Server Error while checking status.") // Use 500 for server errors
   }
 }
 

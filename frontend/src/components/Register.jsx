@@ -43,16 +43,7 @@ const Register = ({ eventId, eventTitle, variant = "primary", className = "", si
       return
     }
     
-    // Special handling for demo events (numeric IDs)
-    if (typeof eventId === 'number' || !isNaN(parseInt(eventId)) && parseInt(eventId).toString() === eventId) {
-      // For demo events, just show success message
-      alert("Registration successful!")
-      setInputData({ username: "", email: "", phoneNo: "" })
-      handleClose()
-      return
-    }
-    
-    // Regular flow for real events with MongoDB ObjectIds
+    // Regular flow for all events (numeric or string IDs)
     
     // Get user data from session storage if available
     let userId = "guest"
@@ -88,12 +79,15 @@ const Register = ({ eventId, eventTitle, variant = "primary", className = "", si
         alert("Registration successful!")
         setInputData({ username: "", email: "", phoneNo: "" })
         handleClose()
-        navigate("/login")
       } else {
-        alert("Registration failed. Please try again.")
+        // Display more specific error from backend if available
+        const errorMessage = result.response?.data || "Registration failed. Please try again.";
+        alert(errorMessage);
       }
     } catch (err) {
-      alert("Registration failed. Please try again.")
+      // Log the error and show a generic message
+      console.error("Registration API error:", err);
+      alert("An error occurred during registration. Please try again.")
     }
   }
 

@@ -57,8 +57,8 @@ exports.loginController = async (req, res) => {
       console.log("Found user with email:", existingUser.email)
       
       if (password === existingUser.password) {
-        const token = jwt.sign({ userId: existingUser._id }, process.env.JWTPASSWORD || "fallbacksecret")
-        console.log("Login successful, token generated")
+        const token = jwt.sign({ userId: existingUser._id, email: existingUser.email }, process.env.JWTPASSWORD || "fallbacksecret")
+        console.log("Login successful, token generated with userId and email")
         
         res.status(200).json({ 
           user: existingUser, 

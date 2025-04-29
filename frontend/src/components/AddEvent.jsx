@@ -6,62 +6,12 @@ import { addEventsAPI, editEventAPI } from "../services/allAPI"
 import { useLocation, useParams } from "react-router-dom"
 import { isModifyEventContext } from "../contexts/ContextAPI"
 
-const AddEvent = ({ displayData }) => {
+const AddEvent = ({ show, handleClose, displayData }) => {
   const { setIsModifyEvent } = useContext(isModifyEventContext)
-  const [show, setShow] = useState(false)
   const location = useLocation()
   const { id } = useParams()
 
   const isEventDetailPage = location.pathname.includes("/event")
-
-  const handleClose = () => {
-    setShow(false)
-  }
-
-  useEffect(() => {
-    if (isEventDetailPage && displayData) {
-      // Prepopulate form fields with the data of the existing event for modification
-      setEventData({
-        eventName: displayData.eventName || "",
-        eventDescription: displayData.eventDescription || "",
-        eventWebsite: displayData.eventWebsite || "",
-        startDate: displayData.startDate ? displayData.startDate.substring(0, 10) : "",
-        endDate: displayData.endDate ? displayData.endDate.substring(0, 10) : "",
-        startTime: displayData.startTime || "",
-        endTime: displayData.endTime || "",
-        location_city: displayData.location_city || "",
-        location_state: displayData.location_state || "",
-        audienceType: displayData.audienceType || "General",
-        eventType: displayData.eventType || "",
-        organizer: displayData.organizer || "",
-      })
-
-      // Set checkbox states based on existing data
-      setIsOneDayEvent(displayData.startDate === displayData.endDate)
-    } else {
-      // Initialize empty values for new event creation
-      setEventData({
-        eventName: "",
-        eventDescription: "",
-        eventWebsite: "",
-        startDate: "",
-        endDate: "",
-        startTime: "",
-        endTime: "",
-        location_city: "",
-        location_state: "",
-        audienceType: "General",
-        eventType: "",
-        organizer: "",
-      })
-
-      setIsOneDayEvent(false)
-    }
-  }, [show, isEventDetailPage, displayData])
-
-  const handleShow = () => {
-    setShow(true)
-  }
 
   const [isOneDayEvent, setIsOneDayEvent] = useState(false)
 
@@ -79,6 +29,7 @@ const AddEvent = ({ displayData }) => {
     eventName: "",
     eventDescription: "",
     eventWebsite: "",
+    image: "",
     startDate: "",
     endDate: "",
     startTime: "",
@@ -103,10 +54,55 @@ const AddEvent = ({ displayData }) => {
     }
   }
 
+  useEffect(() => {
+    if (isEventDetailPage && displayData) {
+      // Prepopulate form fields with the data of the existing event for modification
+      setEventData({
+        eventName: displayData.eventName || "",
+        eventDescription: displayData.eventDescription || "",
+        eventWebsite: displayData.eventWebsite || "",
+        image: displayData.image || "",
+        startDate: displayData.startDate ? displayData.startDate.substring(0, 10) : "",
+        endDate: displayData.endDate ? displayData.endDate.substring(0, 10) : "",
+        startTime: displayData.startTime || "",
+        endTime: displayData.endTime || "",
+        location_city: displayData.location_city || "",
+        location_state: displayData.location_state || "",
+        audienceType: displayData.audienceType || "General",
+        eventType: displayData.eventType || "",
+        organizer: displayData.organizer || "",
+      })
+
+      // Set checkbox states based on existing data
+      setIsOneDayEvent(displayData.startDate === displayData.endDate)
+    } else {
+      // Initialize empty values for new event creation
+      setEventData({
+        eventName: "",
+        eventDescription: "",
+        eventWebsite: "",
+        image: "",
+        startDate: "",
+        endDate: "",
+        startTime: "",
+        endTime: "",
+        location_city: "",
+        location_state: "",
+        audienceType: "General",
+        eventType: "",
+        organizer: "",
+      })
+
+      setIsOneDayEvent(false)
+    }
+  }, [show, isEventDetailPage, displayData])
+
   const handleRegister = async () => {
     const {
       eventName,
       eventDescription,
+      eventWebsite,
+      image,
       startDate,
       endDate,
       startTime,
@@ -157,8 +153,8 @@ const AddEvent = ({ displayData }) => {
           const result = await addEventsAPI(eventData, reqHeaders)
           if (result.status == 200) {
             alert("Event added successfully!")
-            setShow(false) // Close the modal
-            window.location.reload(); // Refresh the page to show the new event
+            handleClose()
+            window.location.reload();
           } else {
             alert(result.response?.data || "Failed to add event")
           }
@@ -176,6 +172,8 @@ const AddEvent = ({ displayData }) => {
     const {
       eventName,
       eventDescription,
+      eventWebsite,
+      image,
       startDate,
       endDate,
       startTime,
@@ -220,8 +218,8 @@ const AddEvent = ({ displayData }) => {
           if (result.status == 200) {
             alert("Event updated successfully!")
             setIsModifyEvent(result.data)
-            setShow(false) // Close the modal
-            window.location.reload(); // Refresh the page to show updated event
+            handleClose()
+            window.location.reload();
           } else {
             alert(result.response?.data || "Failed to update event")
           }
@@ -245,29 +243,11 @@ const AddEvent = ({ displayData }) => {
 
   return (
     <>
-      {isEventDetailPage ? (
-        <button
-          onClick={handleShow}
-          style={{ position: "absolute", right: "1rem" }}
-          className="btn btn-warning rounded-pill px-4 border-2 fw-bold me-5"
-        >
-          Modify Event
-        </button>
-      ) : (
-        <button
-          onClick={handleShow}
-          style={{ position: "absolute", right: "1rem", zIndex: "10" }}
-          className="btn btn-warning rounded-pill px-4 border-2 fw-bold"
-        >
-          Add New Event
-        </button>
-      )}
-
-      {/* Event Form Modal */}
+      {/* Event Form Modal - Use props for show and onHide */}
       <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false} dialogClassName="modal-lg">
         <Modal.Header closeButton>
           <Modal.Title className="text-primary fw-semibold">
-            {isEventDetailPage ? "Update Event Details" : "Add Event Details"}
+            Add Event Details
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -299,13 +279,24 @@ const AddEvent = ({ displayData }) => {
             </Form.Group>
 
             {/* Event Website */}
-            <Form.Group className="mb-3" controlId="formEventWebsite">
-              <Form.Label className="text-primary fw-bold">Event Website (optional)</Form.Label>
+            <Form.Group className="mb-3" controlId="formGroupEventWebsite">
+              <Form.Label>Event Website (Optional)</Form.Label>
               <Form.Control
-                placeholder="Enter website URL"
                 name="eventWebsite"
                 value={eventData.eventWebsite}
                 onChange={handleInputChange}
+                placeholder="e.g., https://example.com"
+              />
+            </Form.Group>
+
+            {/* Add Image URL Input */}
+            <Form.Group className="mb-3" controlId="formGroupImage">
+              <Form.Label>Image URL (Optional)</Form.Label>
+              <Form.Control
+                name="image"
+                value={eventData.image}
+                onChange={handleInputChange}
+                placeholder="e.g., https://images.unsplash.com/..."
               />
             </Form.Group>
 
@@ -439,15 +430,9 @@ const AddEvent = ({ displayData }) => {
           <Button variant="secondary" onClick={handleClose}>
             Cancel
           </Button>
-          {isEventDetailPage ? (
-            <Button variant="success" onClick={handleUpdate}>
-              Update Event
-            </Button>
-          ) : (
-            <Button variant="success" onClick={handleRegister}>
-              Add Event
-            </Button>
-          )}
+          <Button variant="success" onClick={handleRegister}>
+            Add Event
+          </Button>
         </Modal.Footer>
       </Modal>
     </>

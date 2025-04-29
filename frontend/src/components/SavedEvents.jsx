@@ -84,11 +84,11 @@ const SavedEvents = () => {
       ) : savedEvents?.savedEvents?.length > 0 && savedEventDetails?.length > 0 ? (
         savedEventDetails.map((event) => (
           <Col className="mb-3" sm={12} md={6} lg={4} key={event._id || event.id}>
-            <EventCard displayData={event} insideSavedEvents={true} />
+            <EventCard displayData={event} />
           </Col>
         ))
       ) : (
-        <div className="text-center">You have not saved any event yet!!!</div>
+        null
       )}
     </Row>
   )

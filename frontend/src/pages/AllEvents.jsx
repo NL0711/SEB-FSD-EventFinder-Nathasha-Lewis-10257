@@ -160,7 +160,7 @@ function AllEvents() {
       2: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1000&auto=format&fit=crop",
       3: "https://images.unsplash.com/photo-1517649763962-0c623066013b?q=80&w=1000&auto=format&fit=crop",
       4: "https://images.unsplash.com/photo-1626785774573-4b799315345d?q=80&w=1000&auto=format&fit=crop",
-      5: "https://images.unsplash.com/photo-1581092921461-7031e4bfb83e?q=80&w=1000&auto=format&fit=crop",
+      5: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop",
     };
     
     // For demo events, use the fixed image

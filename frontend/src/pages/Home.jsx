@@ -6,11 +6,13 @@ import { Link, useNavigate } from "react-router-dom"
 import { tokenAuthContext } from "../contexts/AuthContextAPI"
 import { getHomeEventsAPI } from "../services/allAPI"
 import Register from "../components/Register"
+import { AppliedEventsContext } from "../contexts/AppliedEventsContext"
 
 const Home = () => {
   const [homeEvents, setHomeEvents] = useState([])
   const [activeIndex, setActiveIndex] = useState(0)
   const { isAuthorised, setIsAuthorised } = useContext(tokenAuthContext)
+  const { appliedEventIds, isLoadingStatus } = useContext(AppliedEventsContext)
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -123,7 +125,7 @@ const Home = () => {
       eventType: "Competition",
       tags: "innovation, projects, technology",
       userId: "admin123",
-      image: "https://images.unsplash.com/photo-1581092921461-7031e4bfb83e?q=80&w=1000&auto=format&fit=crop",
+      image: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop",
       organizer: "IEEE"
     },
   ]
@@ -281,46 +283,63 @@ const Home = () => {
             {/* Featured Events Grid */}
             <h3 className="text-center mb-4">Featured Events</h3>
             <Row>
-              {featuredEvents.map((event, idx) => (
-                <Col md={4} key={idx} className="mb-4">
-                  <Card className="h-100 shadow-sm hover-shadow">
-                    <div
-                      style={{
-                        height: "120px",
-                        background: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${event.image})`,
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                      }}
-                    ></div>
-                    <Card.Body>
-                      <Card.Title className="fw-bold">{event.eventName}</Card.Title>
-                      <Card.Text className="small text-muted mb-2">
-                        {new Date(event.startDate).toLocaleDateString()}
-                      </Card.Text>
-                      <Card.Text className="small mb-2">{event.eventDescription}</Card.Text>
-                      <Card.Text className="small text-primary">
-                        <strong>By:</strong> {event.organizer}
-                      </Card.Text>
-                    </Card.Body>
-                    <Card.Footer className="bg-white border-0 d-flex gap-2">
-                      <Button 
-                        variant="outline-primary" 
-                        size="sm" 
-                        className="w-50" 
-                        onClick={() => handleViewDetails(event._id)}
-                      >
-                        Details
-                      </Button>
-                      <Register 
-                        eventId={event._id} 
-                        eventTitle={event.eventName} 
-                        size="sm"
-                        className="w-50" 
-                      />
-                    </Card.Footer>
-                  </Card>
-                </Col>
-              ))}
+              {featuredEvents.map((event, idx) => {
+                // Determine applied status for this event
+                const isApplied = appliedEventIds.has(event._id?.toString());
+                console.log(`[Home] Rendering card for: ${event.eventName}. ID: ${event._id}, Is Applied?: ${isApplied}`);
+                
+                return (
+                  <Col md={4} key={idx} className="mb-4">
+                    <Card className="h-100 shadow-sm hover-shadow">
+                      <div
+                        style={{
+                          height: "120px",
+                          background: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${event.image})`,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                        }}
+                      ></div>
+                      <Card.Body>
+                        <Card.Title className="fw-bold">{event.eventName}</Card.Title>
+                        <Card.Text className="small text-muted mb-2">
+                          {new Date(event.startDate).toLocaleDateString()}
+                        </Card.Text>
+                        <Card.Text className="small mb-2">{event.eventDescription}</Card.Text>
+                        <Card.Text className="small text-primary">
+                          <strong>By:</strong> {event.organizer}
+                        </Card.Text>
+                      </Card.Body>
+                      <Card.Footer className="bg-white border-0 d-flex gap-2">
+                        <Button 
+                          variant="outline-primary" 
+                          size="sm" 
+                          className="w-50" 
+                          onClick={() => handleViewDetails(event._id)}
+                        >
+                          Details
+                        </Button>
+                        {/* Conditional Button Rendering */}
+                        {isLoadingStatus ? (
+                          <Button variant="secondary" size="sm" disabled className="w-50">
+                            Loading...
+                          </Button>
+                        ) : isApplied ? (
+                          <Button variant="success" size="sm" disabled className="w-50">
+                              <i className="fa-solid fa-check me-1"></i> Applied
+                          </Button>
+                        ) : (
+                          <Register 
+                            eventId={event._id} 
+                            eventTitle={event.eventName} 
+                            size="sm"
+                            className="w-50" 
+                          />
+                        )}
+                      </Card.Footer>
+                    </Card>
+                  </Col>
+                )}
+              )}
             </Row>
           </Col>
         </Row>

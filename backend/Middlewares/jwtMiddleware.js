@@ -15,10 +15,17 @@ const jwtMiddleware = (req, res, next) => {
 
   if (token) {
     try {
-      const jwtResponse = jwt.verify(token, process.env.JWTPASSWORD)
+      const jwtResponse = jwt.verify(token, process.env.JWTPASSWORD || "fallbacksecret")
       // console.log(jwtResponse);
 
       req.userId = jwtResponse.userId
+      req.userEmail = jwtResponse.email
+      
+      if (!req.userEmail) {
+        console.error("Email not found in JWT token payload!");
+        return res.status(401).json("Authorization failed... Invalid token payload.");
+      }
+      
       next()
     } catch (err) {
       res.status(401).json("Authorisation failed... Please Login!!!")

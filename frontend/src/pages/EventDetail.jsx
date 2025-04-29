@@ -5,16 +5,19 @@ import { Row, Col, Container, Card, Button, Badge, ListGroup } from "react-boots
 import { useParams, useNavigate } from "react-router-dom"
 import { getEventAPI, applyEventAPI, getAllEventsAPI } from "../services/allAPI"
 import { tokenAuthContext } from "../contexts/AuthContextAPI"
+import { AppliedEventsContext } from "../contexts/AppliedEventsContext"
 
 function EventDetail() {
   const { id } = useParams()
   const { isAuthorised } = useContext(tokenAuthContext)
+  const { appliedEventIds, isLoadingStatus: isLoadingContextStatus, addAppliedEventId } = useContext(AppliedEventsContext)
   const [event, setEvent] = useState({})
   const [similarEvents, setSimilarEvents] = useState([])
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(true)
   const [isAdmin, setIsAdmin] = useState(false)
   const navigate = useNavigate()
+  const [isApplied, setIsApplied] = useState(false)
 
   const getEventDetails = async () => {
     setLoading(true)
@@ -205,6 +208,8 @@ function EventDetail() {
       
       if (result.status === 200) {
         alert("Successfully registered for this event!");
+        addAppliedEventId(id);
+        setIsApplied(true);
       } else {
         alert(result.response?.data || "Registration failed. Please try again.");
       }
@@ -233,6 +238,17 @@ function EventDetail() {
   };
 
   useEffect(() => {
+    const currentIdStr = id?.toString();
+    if (appliedEventIds.has(currentIdStr)) {
+      setIsApplied(true);
+      console.log(`[EventDetail] Event ${id} is in applied context, setting isApplied=true`);
+    } else {
+      setIsApplied(false);
+      console.log(`[EventDetail] Event ${id} is NOT in applied context, setting isApplied=false`);
+    }
+  }, [id, appliedEventIds]);
+
+  useEffect(() => {
     // Check if the user is an admin when component mounts
     const checkAdminStatus = () => {
       const userData = JSON.parse(sessionStorage.getItem("existingUser"));
@@ -245,6 +261,11 @@ function EventDetail() {
     
     checkAdminStatus();
     getEventDetails();
+  }, [id]);
+
+  // useEffect to scroll to top on mount or ID change
+  useEffect(() => {
+    window.scrollTo(0, 0);
   }, [id]);
 
   return (
@@ -322,27 +343,31 @@ function EventDetail() {
                           Add Event
                         </Button>
                       )}
-                      {isAuthorised ? (
-                        <Button 
-                          variant="primary" 
-                          size="lg" 
-                          className="fw-bold shadow" 
-                          onClick={handleRegister}
-                        >
-                          <i className="fa-solid fa-user-plus me-2"></i>
-                          Register Now
-                        </Button>
-                      ) : (
-                        <Button 
-                          variant="primary" 
-                          size="lg" 
-                          className="fw-bold shadow" 
-                          onClick={() => navigate("/login")}
-                        >
-                          <i className="fa-solid fa-right-to-bracket me-2"></i>
-                          Login to Register
-                        </Button>
-                      )}
+                      <div className="mt-3 d-grid">
+                        {isAuthorised ? (
+                          isLoadingContextStatus ? (
+                            <Button variant="secondary" disabled>
+                              Loading Status...
+                            </Button>
+                          ) : isApplied ? (
+                            <Button 
+                              variant="success" 
+                              disabled 
+                              style={{ opacity: 1 }} 
+                            >
+                              <i className="fa-solid fa-check me-2"></i>Applied
+                            </Button>
+                          ) : (
+                            <Button variant="primary" onClick={handleRegister} disabled={loading}>
+                              Register Now
+                            </Button>
+                          )
+                        ) : (
+                          <Button variant="warning" onClick={() => navigate("/login")}>
+                            Login to Register
+                          </Button>
+                        )}
+                      </div>
                     </Col>
                   </Row>
                 </Container>
