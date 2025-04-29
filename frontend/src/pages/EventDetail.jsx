@@ -4,7 +4,6 @@ import { useEffect, useState, useContext } from "react"
 import { Row, Col, Container, Button, Card, Badge } from "react-bootstrap"
 import { useParams, useNavigate } from "react-router-dom"
 import { getEventDetailsAPI, getAllEventsAPI } from "../services/allAPI"
-import { tokenAuthContext } from "../contexts/AuthContextAPI"
 import { AppliedEventsContext } from "../contexts/AppliedEventsContext"
 import { SavedEventsContext } from "../contexts/SavedEventsContext"
 import EventActionButtons from "../components/Event/EventActionButtons"
@@ -12,7 +11,6 @@ import EventCard from "../components/Event/EventCard"
 
 function EventDetail() {
   const { id } = useParams()
-  const { isAuthorised } = useContext(tokenAuthContext)
   const { isLoadingStatus: isLoadingAppliedStatus } = useContext(AppliedEventsContext)
   const { isLoadingSavedStatus } = useContext(SavedEventsContext)
   const [event, setEvent] = useState(null)

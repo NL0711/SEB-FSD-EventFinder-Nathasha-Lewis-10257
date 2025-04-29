@@ -17,7 +17,7 @@ router.get("/home-events", eventController.getHomeEventsController)
 router.get("/user-events", jwtMiddleware, eventController.getUserEventsController)
 router.get("/event", eventController.getAllEventsController)
 router.get("/event/:id", eventController.getEventDetailsController)
-router.delete("/events/:id/remove", jwtMiddleware, eventController.deleteEventController)
+router.delete("/events/:id/remove", jwtMiddleware, eventController.removeEventController)
 
 router.post("/apply-event", jwtMiddleware, appliedEventController.applyEventController)
 router.get("/apply-event/view", jwtMiddleware, appliedEventController.getUserAppliedEvents)
