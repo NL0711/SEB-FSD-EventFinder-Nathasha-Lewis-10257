@@ -42,7 +42,6 @@ function Dashboard() {
                   </div>
                   <div className="flex-grow-1">
                     <h2 className="mb-1">Welcome, {username}</h2>
-                    {email && <p className="text-muted mb-2"><i className="fa-solid fa-envelope me-2"></i>{email}</p>}
                     <p className="text-muted mb-0">Manage your events and profile from your personal dashboard</p>
                   </div>
                 </div>

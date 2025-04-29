@@ -66,7 +66,6 @@ function EventCard({ displayData = {}, image, insideMyEvents = false, insideSave
         }
       }
     } catch (error) {
-      // alert("An error occurred while updating saved status."); // Remove alert
     } finally {
       setIsSaving(false);
     }

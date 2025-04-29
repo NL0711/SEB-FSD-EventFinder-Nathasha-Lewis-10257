@@ -30,10 +30,9 @@ exports.saveEventController = async (req, res) => {
   }
 }
 
-// Remove a saved event
 exports.removeSavedEventController = async (req, res) => {
   const userId = req.userId
-  const { eventId } = req.body // Get eventId from body for consistency
+  const { eventId } = req.body
 
   if (!eventId) {
     return res.status(400).json({ message: "Event ID is required." })
@@ -50,11 +49,10 @@ exports.removeSavedEventController = async (req, res) => {
   }
 }
 
-// Get IDs of all saved events for the current user
 exports.getUserSavedEventIdsController = async (req, res) => {
   const userId = req.userId
   try {
-    const savedEventRecords = await savedEvents.find({ userId }).select("eventId -_id") // Select only eventId
+    const savedEventRecords = await savedEvents.find({ userId }).select("eventId -_id")
     const eventIds = savedEventRecords.map((record) => record.eventId)
     res.status(200).json(eventIds)
   } catch (error) {
@@ -62,20 +60,16 @@ exports.getUserSavedEventIdsController = async (req, res) => {
   }
 }
 
-// Get full details of saved events for the current user
 exports.getSavedEventDetailsController = async (req, res) => {
   const userId = req.userId
   try {
-    // Find all saved event records for the user
     const savedEventRecords = await savedEvents.find({ userId })
     if (!savedEventRecords || savedEventRecords.length === 0) {
-      return res.status(200).json([]) // Return empty array if nothing saved
+      return res.status(200).json([])
     }
 
-    // Extract the event IDs
     const eventIds = savedEventRecords.map((record) => record.eventId)
 
-    // Fetch the full event details for those IDs
     const eventDetails = await events.find({ _id: { $in: eventIds } })
 
     res.status(200).json(eventDetails)
