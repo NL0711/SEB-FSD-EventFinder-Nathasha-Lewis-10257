@@ -10,16 +10,16 @@ A MERN stack web application built for **Fr. Conceicao Rodrigues College of Engi
 
 ## 🚀 Features
 
-🔐 **Student Login** – Secure authentication for students
-🗓️ **Event Listing** – Browse and register for college events and hackathons
-📊 **Student Dashboard** – View registered events and participation history
-🛠️ **Admin Panel** – Separate login and dashboard for admins to:
+-**Student Login** – Secure authentication for students
+-**Event Listing** – Browse and register for college events and hackathons
+-**Student Dashboard** – View registered events and participation history
+-**Admin Panel** – Separate login and dashboard for admins to:
   - Add/update/delete events
   - View participants
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠 Tech Stack
 
 **MongoDB** – NoSQL database  
 **Express.js** – Backend framework
@@ -29,7 +29,7 @@ A MERN stack web application built for **Fr. Conceicao Rodrigues College of Engi
 
 ---
 
-## 🔧 How to Run the Project
+## How to Run the Project
 
 ⚠️ Make sure:
 - Ensure you have Node.js installed
@@ -115,14 +115,8 @@ fsdproject/
 ```
 ---
 
-## 👤 Author
+## 👤 Developed by
 
-Developed by:
 - Nathasha Lewis(10257)
 - Adnan Khan(10254)
 - Chris Fernandes(10244)
-
-## 📜 License
-
-This project is licensed under MIT License.
-
