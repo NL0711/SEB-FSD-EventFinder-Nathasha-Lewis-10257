@@ -10,10 +10,10 @@ A MERN stack web application built for **Fr. Conceicao Rodrigues College of Engi
 
 ## 🚀 Features
 
--**Student Login** – Secure authentication for students
--**Event Listing** – Browse and register for college events and hackathons
--**Student Dashboard** – View registered events and participation history
--**Admin Panel** – Separate login and dashboard for admins to:
+- **Student Login** – Secure authentication for students
+- **Event Listing** – Browse and register for college events and hackathons
+- **Student Dashboard** – View registered events and participation history
+- **Admin Panel** – Separate login and dashboard for admins to:
   - Add/update/delete events
   - View participants
 
