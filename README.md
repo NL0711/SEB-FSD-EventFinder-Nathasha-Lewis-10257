@@ -35,6 +35,8 @@ A MERN stack web application built for **Fr. Conceicao Rodrigues College of Engi
 Clone the project and navigate to project folder
 ```
 git clone https://github.com/NL0711/SEB_EventFinder_NathashaLewis_10257.git
+```
+```
 cd SEB_EventFinder_NathashaLewis_10257
 ```
 
@@ -56,9 +58,10 @@ Replace:
 - <your_mongodb_connection_string> with your actual MongoDB connection string
 - <some_port_number> with a specific port (Optional, defaults to 3000)
 - <jwt_secret_password> with a valid JWT string
-- 
 ```
 npm install  //install dependencies
+```
+```
 node index.js  //start server
 ```
 
@@ -69,7 +72,11 @@ node index.js  //start server
 Open a new, separate terminal window/tab. Navigate back to the project's root directory.
 ```
 cd frontend  //naviagate to frontend dir
+```
+```
 npm install  //install dependencies
+```
+```
 npm run dev  //run the app
 ```
 Keep this terminal running as well
@@ -97,9 +104,10 @@ frcrce-event-platform/
 Developed by:
 - Nathasha Lewis(10257)
 - Adnan Khan(10254)
-- Chris Fernandes(10244) 
-For academic/institutional use at **FR.CRCE**
+- Chris Fernandes(10244)
 
+---
+For academic/institutional use at **FR.CRCE**
 ---
 
 ## 📜 License
