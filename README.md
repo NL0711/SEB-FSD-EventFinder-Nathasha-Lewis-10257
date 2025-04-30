@@ -18,39 +18,60 @@ A MERN stack web application built for **Fr. Conceicao Rodrigues College of Engi
 ## 🛠️ Tech Stack
 
 - **MongoDB** – NoSQL database  
-- **Express.js** – Backend framework  
-- **React.js** – Frontend library  
-- **Node.js** – Backend runtime  
+- **Express.js** – Backend framework
+- **Node.js** – Backend server  
+- **React.js** – React frontend library
 - **VS Code** – Recommended IDE
 
 ---
 
 ## 🔧 How to Run the Project (Full Setup)
 
-### 1️⃣ Clone the Repository
+⚠️ Make sure:
+- Ensure you have Node.js installed
+- MongoDB is installed and running locally (default: mongodb://localhost:27017)
+- If you're using a remote MongoDB, update the connection string in the backend .env file
 
-git clone https://github.com/yourusername/frcrce-event-platform.git  
-cd frcrce-event-platform
+git clone https://github.com/NL0711/SEB_EventFinder_NathashaLewis_10257.git
+cd SEB_EventFinder_NathashaLewis_10257
 
 ---
 
 ### 2️⃣ Setup and Run Backend
 
-cd backend  
-npm install  
-node index.js
-
-⚠️ Make sure:
-- MongoDB is installed and running locally (default: mongodb://localhost:27017)
-- If you're using a remote MongoDB, update the connection string in the backend config file
+```
+cd backend
+```
+- Create a .env file in the backend directory.
+- Add the following lines
+```
+MONGO_URI=<your_mongodb_connection_string>
+PORT=<some_port_number>
+JWTPASSWORD=<jwt_secret_password>  
+```
+- Replace
+- <your_mongodb_connection_string> with your actual MongoDB connection string
+- <some_port_number> with a specific port (Optional, defaults to 3000)
+- <jwt_secret_password> with a valid JWT string
+- 
+```
+npm install  //install dependencies
+node index.js  //start server
+```
 
 ---
 
 ### 3️⃣ Setup and Run Frontend
 
-cd frontend  
-npm install  
-npm run dev
+- Open a new, separate terminal window/tab. Navigate back to the project's root directory.
+
+```
+cd frontend  //naviagate to frontend dir
+npm install  //install dependencies
+npm run dev  //run the app
+```
+
+- Keep this terminal running as well
 
 🌐 The frontend will start by default at:  
 http://localhost:5173
@@ -60,10 +81,10 @@ http://localhost:5173
 ## 📁 Folder Structure
 
 frcrce-event-platform/  
-├── backend/       # Express backend with MongoDB  
+├── backend/       # Node.js + Express.js backend with MongoDB  
 │   └── index.js  
 │  
-├── frontend/      # React frontend  
+├── frontend/      # React.js frontend  
 │   └── src/  
 │  
 └── README.md      # Project documentation
@@ -72,7 +93,7 @@ frcrce-event-platform/
 
 ## 👤 Author
 
-Developed by Adnan Khan(10254), Nathasha Lewis(10257),Chris Fernandes(10244) 
+Developed by Adnan Khan(10254), Nathasha Lewis(10257), Chris Fernandes(10244) 
 For academic/institutional use at **FR.CRCE**
 
 ---
