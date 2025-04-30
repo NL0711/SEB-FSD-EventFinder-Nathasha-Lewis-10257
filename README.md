@@ -6,10 +6,10 @@ A MERN stack web application built for **Fr. Conceicao Rodrigues College of Engi
 
 ## 🚀 Features
 
-- 🔐 **Student Login** – Secure authentication for students
-- 🗓️ **Event Listing** – Browse and register for college events and hackathons
-- 📊 **Student Dashboard** – View registered events and participation history
-- 🛠️ **Admin Panel** – Separate login and dashboard for admins to:
+🔐 **Student Login** – Secure authentication for students
+🗓️ **Event Listing** – Browse and register for college events and hackathons
+📊 **Student Dashboard** – View registered events and participation history
+🛠️ **Admin Panel** – Separate login and dashboard for admins to:
   - Add/update/delete events
   - View participants
 
@@ -17,11 +17,11 @@ A MERN stack web application built for **Fr. Conceicao Rodrigues College of Engi
 
 ## 🛠️ Tech Stack
 
-- **MongoDB** – NoSQL database  
-- **Express.js** – Backend framework
-- **Node.js** – Backend server  
-- **React.js** – React frontend library
-- **VS Code** – Recommended IDE
+**MongoDB** – NoSQL database  
+**Express.js** – Backend framework
+**Node.js** – Backend server  
+**React.js** – React frontend library
+**VS Code** – Recommended IDE
 
 ---
 
@@ -32,8 +32,11 @@ A MERN stack web application built for **Fr. Conceicao Rodrigues College of Engi
 - MongoDB is installed and running locally (default: mongodb://localhost:27017)
 - If you're using a remote MongoDB, update the connection string in the backend .env file
 
+Clone the project and navigate to project folder
+```
 git clone https://github.com/NL0711/SEB_EventFinder_NathashaLewis_10257.git
 cd SEB_EventFinder_NathashaLewis_10257
+```
 
 ---
 
@@ -49,7 +52,7 @@ MONGO_URI=<your_mongodb_connection_string>
 PORT=<some_port_number>
 JWTPASSWORD=<jwt_secret_password>  
 ```
-- Replace
+Replace:
 - <your_mongodb_connection_string> with your actual MongoDB connection string
 - <some_port_number> with a specific port (Optional, defaults to 3000)
 - <jwt_secret_password> with a valid JWT string
@@ -63,15 +66,13 @@ node index.js  //start server
 
 ### 3️⃣ Setup and Run Frontend
 
-- Open a new, separate terminal window/tab. Navigate back to the project's root directory.
-
+Open a new, separate terminal window/tab. Navigate back to the project's root directory.
 ```
 cd frontend  //naviagate to frontend dir
 npm install  //install dependencies
 npm run dev  //run the app
 ```
-
-- Keep this terminal running as well
+Keep this terminal running as well
 
 🌐 The frontend will start by default at:  
 http://localhost:5173
@@ -93,7 +94,10 @@ frcrce-event-platform/
 
 ## 👤 Author
 
-Developed by Adnan Khan(10254), Nathasha Lewis(10257), Chris Fernandes(10244) 
+Developed by:
+- Nathasha Lewis(10257)
+- Adnan Khan(10254)
+- Chris Fernandes(10244) 
 For academic/institutional use at **FR.CRCE**
 
 ---
